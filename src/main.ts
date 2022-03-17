@@ -11,7 +11,7 @@ import { HttpExceptionFilter } from './utils/exception/httpExceptionFilter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors()
+  app.enableCors();
   app.useGlobalFilters(
     new AllExceptionsFilter(),
     new ApplicationExceptionFilter(),
@@ -33,6 +33,7 @@ async function bootstrap() {
 
   SwaggerModule.setup('api/swagger', app, document);
 
-  await app.listen(5000); // HTTP PORT
+  await app.listen(4000); // HTTP PORT
+  console.log('starting in port 4000');
 }
 bootstrap();
