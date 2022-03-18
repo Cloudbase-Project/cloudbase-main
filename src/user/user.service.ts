@@ -6,7 +6,7 @@ import { Model } from 'mongoose';
 import { Project, ProjectDocument } from './entities/project.entity';
 import { createProjectDTO } from './dtos/createProject.dto';
 import { ServiceList } from './types/ServiceList';
-import { ServiceDocument } from './entities/service.entity';
+import { Service, ServiceDocument } from './entities/service.entity';
 
 @Injectable()
 export class userService {
@@ -35,5 +35,13 @@ export class userService {
     user.projects.push(project);
     await user.save();
     return user;
+  }
+
+  async getProject(projectId: string, userId: string) {
+    const project = await this.projectModel.findById(projectId);
+    if (!project) {
+      throw new ApplicationException('No such project exists', 400);
+    }
+    return project;
   }
 }

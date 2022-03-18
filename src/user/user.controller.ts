@@ -8,6 +8,7 @@ import {
   UseGuards,
   Inject,
   ValidationPipe,
+  Param,
 } from '@nestjs/common';
 import { userService } from './user.service';
 import { AuthGuard } from 'src/auth/guards/authGuard';
@@ -27,10 +28,8 @@ export class userController {
     @Inject(REQUEST) private readonly req: Request,
   ) {}
 
-  @Get() // route
+  @Get('/') // route
   @ApiHeader({ name: 'Authorization', required: true })
-
-  // @ApiBasicAuth()
   @UseGuards(AuthGuard)
   @HttpCode(201) // Return type
   getUser() {
@@ -50,5 +49,14 @@ export class userController {
     createProjectDTO: createProjectDTO,
   ) {
     return this.userService.createProject(createProjectDTO, this.req.id);
+  }
+
+  @Get('/projects/:projectId') // route
+  @ApiHeader({ name: 'Authorization', required: true })
+  @UseGuards(AuthGuard)
+  @HttpCode(201) // Return type
+  getProject(@Param('projectId') projectId: string) {
+    console.log('everythign : ', projectId, this.req.id);
+    return this.userService.getProject(projectId, this.req.id);
   }
 }
