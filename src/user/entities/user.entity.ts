@@ -2,6 +2,8 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { RegisteredVia } from '../types/RegisteredVia';
 import { Roles } from '../types/roles';
 import { Document } from 'mongoose';
+import { Service } from './service.entity';
+import { Project } from './project.entity';
 
 export type UserDocument = User & Document;
 
@@ -34,6 +36,9 @@ export class User {
 
   @Prop({ enum: RegisteredVia, required: true })
   registeredVia: RegisteredVia;
+
+  @Prop()
+  projects: [Project];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -6,10 +6,16 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthGuard } from '../auth/guards/authGuard';
 import { authModule } from 'src/auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { Project, ProjectSchema } from './entities/project.entity';
+import { Service, ServiceSchema } from './entities/service.entity';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    MongooseModule.forFeature([
+      { name: User.name, schema: UserSchema },
+      { name: Project.name, schema: ProjectSchema },
+      { name: Service.name, schema: ServiceSchema },
+    ]),
     ConfigModule,
     authModule,
   ],
