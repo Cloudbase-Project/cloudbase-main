@@ -7,6 +7,7 @@ import { Project, ProjectDocument } from './entities/project.entity';
 import { createProjectDTO } from './dtos/createProject.dto';
 import { ServiceList } from './types/ServiceList';
 import { Service, ServiceDocument } from './entities/service.entity';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class userService {
@@ -38,10 +39,60 @@ export class userService {
   }
 
   async getProject(projectId: string, userId: string) {
-    const project = await this.projectModel.findById(projectId);
+    const user = await this.userModel.findOne({
+      id: userId,
+      'projects._id': new mongoose.Types.ObjectId(projectId),
+    });
+    if (!user) {
+      throw new ApplicationException('No such project exists', 400);
+    }
+    console.log(user.projects);
+
+    return user;
+  }
+
+  async toggleService(
+    projectId: string,
+    userId: string,
+    serviceName: ServiceList,
+  ) {
+    let project = await this.projectModel.findById(projectId);
+    const user = await this.userModel.findOne({
+      id: userId,
+      'projects._id': new mongoose.Types.ObjectId(projectId),
+    });
     if (!project) {
       throw new ApplicationException('No such project exists', 400);
     }
+    if (!user) {
+      throw new ApplicationException('You cannot perform this action', 401);
+    }
+
+    for (const service of project.services) {
+      if (service.name == serviceName) {
+        const updatedProject = await this.projectModel.updateOne(
+          // @ts-ignore
+          { 'services._id': service._id },
+          {
+            $set: {
+              'services.$.enabled': !service.enabled,
+            },
+          },
+        );
+        // TODO: send internal request to that service
+        const p = await this.projectModel.findById(projectId);
+        return p;
+      }
+    }
+
+    const service = await this.serviceModel.create({
+      name: serviceName,
+      enabled: true,
+    });
+    project.services.push(service);
+
+    await project.save();
+
     return project;
   }
 }
