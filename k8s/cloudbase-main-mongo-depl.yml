@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudbase-main-mongo-depl
+spec:
+  selector:
+    matchLabels:
+      app: cloudbase-main-mongo-depl
+  template:
+    metadata:
+      labels:
+        app: cloudbase-main-mongo-depl
+    spec:
+      containers:
+        - name: cloudbase-main-mongo-depl
+          image: mongo
+          resources:
+            # limits:
+            #   memory: '128Mi'
+            #   cpu: '500m'
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cloudbase-main-mongo-svc
+spec:
+  selector:
+    app: cloudbase-main-mongo-depl
+  type: ClusterIP
+  ports:
+    - port: 27017
+      targetPort: 27017
