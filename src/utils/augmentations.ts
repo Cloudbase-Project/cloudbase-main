@@ -6,6 +6,7 @@ declare global {
       //   currentUser?: User;
       email?: string;
       id?: string;
+      token?: string;
     }
   }
 }

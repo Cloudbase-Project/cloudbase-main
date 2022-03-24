@@ -20,7 +20,7 @@ export class AuthGuard implements CanActivate {
       const { email, id } = this.Token.verifyToken(token);
 
       req.email = email;
-
+      req.token = token;
       req.id = id;
       return true;
     } catch (err) {

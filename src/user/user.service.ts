@@ -8,6 +8,8 @@ import { createProjectDTO } from './dtos/createProject.dto';
 import { ServiceList } from './types/ServiceList';
 import { Service, ServiceDocument } from './entities/service.entity';
 import mongoose from 'mongoose';
+import { HttpService } from '@nestjs/axios';
+import { lastValueFrom, of } from 'rxjs';
 
 @Injectable()
 export class userService {
@@ -20,6 +22,7 @@ export class userService {
     private readonly projectModel: Model<ProjectDocument>,
     @InjectModel('Service')
     private readonly serviceModel: Model<ServiceDocument>,
+    private httpService: HttpService,
   ) {}
 
   async getUser(userId: string) {
@@ -33,6 +36,16 @@ export class userService {
       ...createProjectDTO,
       services: [],
     });
+
+    const resp = await lastValueFrom(
+      this.httpService.post(
+        `${process.env.CLOUDBASE_AUTHENTICATION_URL}/config/`,
+        { projectId: project.id, owner: userId },
+      ),
+    );
+
+    console.log('response from create project : ', resp.data);
+
     user.projects.push(project);
     await user.save();
     return user;
@@ -55,6 +68,7 @@ export class userService {
     projectId: string,
     userId: string,
     serviceName: ServiceList,
+    token: string,
   ) {
     let project = await this.projectModel.findById(projectId);
     const user = await this.userModel.findOne({
@@ -80,10 +94,30 @@ export class userService {
           },
         );
         // TODO: send internal request to that service
+        const resp = await lastValueFrom(
+          this.httpService.post(
+            `${process.env.CLOUDBASE_AUTHENTICATION_URL}/config/${projectId}`,
+            {},
+            { headers: { owner: token } },
+          ),
+        );
+
+        console.log('resp from authentication service : ', resp.data);
+
         const p = await this.projectModel.findById(projectId);
         return p;
       }
     }
+
+    const resp = await lastValueFrom(
+      this.httpService.post(
+        `${process.env.CLOUDBASE_AUTHENTICATION_URL}/config/${projectId}`,
+        {},
+        { headers: { owner: token } },
+      ),
+    );
+
+    console.log('resp from authentication service : ', resp.data);
 
     const service = await this.serviceModel.create({
       name: serviceName,

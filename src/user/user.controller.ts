@@ -81,6 +81,7 @@ export class userController {
       projectId,
       this.req.id,
       toggleServiceDTO.serviceName,
+      this.req.token,
     );
   }
 }

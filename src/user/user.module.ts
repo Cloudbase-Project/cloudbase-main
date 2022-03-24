@@ -8,6 +8,7 @@ import { authModule } from 'src/auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Project, ProjectSchema } from './entities/project.entity';
 import { Service, ServiceSchema } from './entities/service.entity';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { Service, ServiceSchema } from './entities/service.entity';
       { name: Project.name, schema: ProjectSchema },
       { name: Service.name, schema: ServiceSchema },
     ]),
+    HttpModule,
     ConfigModule,
     authModule,
   ],
