@@ -83,7 +83,7 @@ export class userService {
     }
 
     for (const service of project.services) {
-      if (service.name == serviceName) {
+      if (service.name === serviceName) {
         const updatedProject = await this.projectModel.updateOne(
           // @ts-ignore
           { 'services._id': service._id },
@@ -94,6 +94,7 @@ export class userService {
           },
         );
         // TODO: send internal request to that service
+        this.sendRequestToService(serviceName, token, projectId);
         const resp = await lastValueFrom(
           this.httpService.post(
             `${process.env.CLOUDBASE_AUTHENTICATION_URL}/config/${projectId}`,
@@ -128,5 +129,38 @@ export class userService {
     await project.save();
 
     return project;
+  }
+
+  async sendRequestToService(
+    serviceName: ServiceList,
+    token: string,
+    projectId: string,
+  ) {
+    switch (serviceName) {
+      case ServiceList.AUTHENTICATION: {
+        const resp = await lastValueFrom(
+          this.httpService.post(
+            `${process.env.CLOUDBASE_AUTHENTICATION_URL}/config/${projectId}`,
+            {},
+            { headers: { owner: token } },
+          ),
+        );
+
+        console.log('resp from authentication service : ', resp.data);
+        break;
+      }
+      case ServiceList.SERVERLESS: {
+        const resp = await lastValueFrom(
+          this.httpService.post(
+            `${process.env.CLOUDBASE_SERVERLESS_URL}/config/${projectId}`,
+            {},
+            { headers: { owner: token } },
+          ),
+        );
+
+        console.log('resp from serverless service : ', resp.data);
+        break;
+      }
+    }
   }
 }
