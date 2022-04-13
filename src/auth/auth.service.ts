@@ -45,10 +45,10 @@ export class authService {
     });
 
     // TODO: send verification email
-    this.EmailWorker.sendVerificationEmail({
-      email: user.email,
-      id: user.id,
-    }).then();
+    // this.EmailWorker.sendVerificationEmail({
+    //   email: user.email,
+    //   id: user.id,
+    // }).then();
 
     const token = this.Token.newToken<JWTPayload>({
       email: email,

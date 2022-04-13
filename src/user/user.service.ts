@@ -37,15 +37,22 @@ export class userService {
       services: [],
     });
 
-    const resp = await lastValueFrom(
+    let resp = await lastValueFrom(
       this.httpService.post(
         `${process.env.CLOUDBASE_AUTHENTICATION_URL}/config/`,
         { projectId: project.id, owner: userId },
       ),
     );
 
-    console.log('response from create project : ', resp.data);
+    console.log('response from auth create project : ', resp.data);
 
+    resp = await lastValueFrom(
+      this.httpService.post(`${process.env.CLOUDBASE_SERVERLESS_URL}/config/`, {
+        projectId: project.id,
+        owner: userId,
+      }),
+    );
+    console.log('resp from serverless : ', resp.data);
     user.projects.push(project);
     await user.save();
     return user;
