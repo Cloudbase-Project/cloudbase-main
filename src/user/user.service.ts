@@ -53,6 +53,18 @@ export class userService {
       }),
     );
     console.log('resp from serverless : ', resp.data);
+
+    resp = await lastValueFrom(
+      this.httpService.post(
+        `${process.env.CLOUDBASE_STATIC_SITE_HOSTING_URL}/config/`,
+        {
+          projectId: project.id,
+          owner: userId,
+        },
+      ),
+    );
+    console.log('resp from static site hosting : ', resp.data);
+
     user.projects.push(project);
     await user.save();
     return user;
@@ -166,6 +178,18 @@ export class userService {
         );
 
         console.log('resp from serverless service : ', resp.data);
+        break;
+      }
+      case ServiceList.STATIC_SITE_HOSTING: {
+        const resp = await lastValueFrom(
+          this.httpService.post(
+            `${process.env.CLOUDBASE_STATIC_SITE_HOSTING_URL}/config/${projectId}`,
+            {},
+            { headers: { owner: token } },
+          ),
+        );
+
+        console.log('resp from static site hosting service : ', resp.data);
         break;
       }
     }

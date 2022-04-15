@@ -2,56 +2,64 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-    name: ingress-service
-    annotations:
-        kubernetes.io/ingress.class: nginx
-        nginx.ingress.kubernetes.io/use-regex: 'true'
-        nginx.ingress.kubernetes.io/rewrite-target: /$1
+  name: ingress-service
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
 spec:
-    rules:
-        - host: cloudbase.dev
-          http:
-              paths:
-                  - pathType: Prefix
-                    path: /?(.*)
-                    # path: /
-                    backend:
-                        service:
-                            name: frontend-svc
-                            port:
-                                number: 3000
-        - host: backend.cloudbase.dev
-          http:
-              paths:
-                  - pathType: Prefix
-                    path: /main/?(.*)
-                    # path: /
-                    backend:
-                        service:
-                            name: cloudbase-main-svc
-                            port:
-                                number: 4000
-                  - pathType: Prefix
-                    path: /auth/?(.*)
-                    # path: /
-                    backend:
-                        service:
-                            name: cloudbase-authentication-svc
-                            port:
-                                number: 4000
-                  - pathType: Prefix
-                    path: /email/?(.*)
-                    # path: /
-                    backend:
-                        service:
-                            name: cloudbase-email-service-svc
-                            port:
-                                number: 4000
-                  - pathType: Prefix
-                    path: /serverless/?(.*)
-                    # path: /
-                    backend:
-                        service:
-                            name: cloudbase-serverless-svc
-                            port:
-                                number: 4000
+  rules:
+    - host: cloudbase.dev
+      http:
+        paths:
+          - pathType: Prefix
+            path: /?(.*)
+            # path: /
+            backend:
+              service:
+                name: frontend-svc
+                port:
+                  number: 3000
+    - host: backend.cloudbase.dev
+      http:
+        paths:
+          - pathType: Prefix
+            path: /main/?(.*)
+            # path: /
+            backend:
+              service:
+                name: cloudbase-main-svc
+                port:
+                  number: 4000
+          - pathType: Prefix
+            path: /auth/?(.*)
+            # path: /
+            backend:
+              service:
+                name: cloudbase-authentication-svc
+                port:
+                  number: 4000
+          - pathType: Prefix
+            path: /email/?(.*)
+            # path: /
+            backend:
+              service:
+                name: cloudbase-email-service-svc
+                port:
+                  number: 4000
+          - pathType: Prefix
+            path: /serverless/?(.*)
+            # path: /
+            backend:
+              service:
+                name: cloudbase-serverless-svc
+                port:
+                  number: 4000
+          - pathType: Prefix
+            path: /static-site-hosting/?(.*)
+            # path: /
+            backend:
+              service:
+                name: cloudbase-ssh-svc
+                port:
+                  number: 4000
