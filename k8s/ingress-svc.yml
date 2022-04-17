@@ -63,3 +63,11 @@ spec:
                 name: cloudbase-ssh-svc
                 port:
                   number: 4000
+          - pathType: Prefix
+            path: /image-resize/?(.*)
+            # path: /
+            backend:
+              service:
+                name: cloudbase-image-resize-svc
+                port:
+                  number: 4000

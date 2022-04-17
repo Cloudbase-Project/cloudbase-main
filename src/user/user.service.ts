@@ -65,6 +65,17 @@ export class userService {
     );
     console.log('resp from static site hosting : ', resp.data);
 
+    resp = await lastValueFrom(
+      this.httpService.post(
+        `${process.env.CLOUDBASE_IMAGE_RESIZE_URL}/config/`,
+        {
+          projectId: project.id,
+          owner: userId,
+        },
+      ),
+    );
+    console.log('resp from image resize : ', resp.data);
+
     user.projects.push(project);
     await user.save();
     return user;
@@ -190,6 +201,19 @@ export class userService {
         );
 
         console.log('resp from static site hosting service : ', resp.data);
+        break;
+      }
+
+      case ServiceList.IMAGE_RESIZE: {
+        const resp = await lastValueFrom(
+          this.httpService.post(
+            `${process.env.CLOUDBASE_IMAGE_RESIZE_URL}/config/${projectId}`,
+            {},
+            { headers: { owner: token } },
+          ),
+        );
+
+        console.log('resp from image resize service : ', resp.data);
         break;
       }
     }
