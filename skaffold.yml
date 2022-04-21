@@ -1,0 +1,89 @@
+apiVersion: skaffold/v2alpha3
+kind: Config
+metadata:
+  name: 'cloudbase'
+build:
+  local:
+    push: false
+  artifacts:
+    # - image: vnavaneeth/cloudbase-frontend
+    #   context: ./frontend
+    #   docker:
+    #       dockerfile: Dockerfile
+    #   sync:
+    #       manual:
+    #           # - src: 'src/**.ts'
+    #           - src: '/frontend/**'
+    #             dest: .
+    - image: vnavaneeth/cloudbase-main
+      context: ./
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          # - src: 'src/**.ts'
+          - src: '../frontend/**'
+            dest: .
+    - image: vnavaneeth/cloudbase-authentication
+      context: ../authentication
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          # - src: 'src/**.ts'
+          - src: '../authentication/**'
+            dest: .
+    - image: vnavaneeth/cloudbase-email-service
+      context: ../email-service
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          # - src: 'src/**.ts'
+          - src: '../email-service/**'
+            dest: .
+    - image: vnavaneeth/cloudbase-serverless
+      context: ../Serverless
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          # - src: 'src/**.ts'
+          - src: '../Serverless/**'
+            dest: .
+    - image: vnavaneeth/serverless-postgres
+      context: ../Serverless
+      docker:
+        dockerfile: Dockerfile.postgres
+    - image: vnavaneeth/cloudbase-ssh
+      context: ../static-site-hosting
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          # - src: 'src/**.ts'
+          - src: '../static-site-hosting/**'
+            dest: .
+    - image: vnavaneeth/cloudbase-image-resize
+      context: ../image-resize
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          # - src: 'src/**.ts'
+          - src: '../image-resize/**'
+            dest: .
+    - image: vnavaneeth/static-site-hosting-postgres
+      context: ../static-site-hosting
+      docker:
+        dockerfile: Dockerfile.postgres
+deploy:
+  kubectl:
+    manifests:
+      - ../authentication/k8s/*.yml
+      - ./k8s/*.yml
+      - ../email-service/k8s/*.yml
+      - ../Serverless/k8s/*.yml
+      - ../static-site-hosting/k8s/*.yml
+      - ../image-resize/k8s/*.yml
+      # - ./cloubase-main/k8s/ingress-svc.yml
