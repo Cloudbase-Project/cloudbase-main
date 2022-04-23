@@ -20,6 +20,55 @@ spec:
                 name: frontend-svc
                 port:
                   number: 3000
+          - pathType: Prefix
+            path: /backend/main/?(.*)
+            backend:
+              service:
+                name: cloudbase-main-svc
+                port:
+                  number: 4000
+          - pathType: Prefix
+            path:
+              /backend/auth/?(.*)
+              # path: /
+            backend:
+              service:
+                name: cloudbase-authentication-svc
+                port:
+                  number: 4000
+          - pathType: Prefix
+            path: /backend/email/?(.*)
+            # path: /
+            backend:
+              service:
+                name: cloudbase-email-service-svc
+                port:
+                  number: 4000
+          - pathType: Prefix
+            path: /backend/serverless/?(.*)
+            # path: /
+            backend:
+              service:
+                name: cloudbase-serverless-svc
+                port:
+                  number: 4000
+          - pathType: Prefix
+            path: /backend/static-site-hosting/?(.*)
+            # path: /
+            backend:
+              service:
+                name: cloudbase-ssh-svc
+                port:
+                  number: 4000
+          - pathType: Prefix
+            path: /backend/image-resize/?(.*)
+            # path: /
+            backend:
+              service:
+                name: cloudbase-image-resize-svc
+                port:
+                  number: 4000
+
     - host: backend.cloudbase.dev
       http:
         paths:

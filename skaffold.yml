@@ -6,23 +6,23 @@ build:
   local:
     push: false
   artifacts:
-    # - image: vnavaneeth/cloudbase-frontend
-    #   context: ./frontend
-    #   docker:
-    #       dockerfile: Dockerfile
-    #   sync:
-    #       manual:
-    #           # - src: 'src/**.ts'
-    #           - src: '/frontend/**'
-    #             dest: .
+    - image: vnavaneeth/cloudbase-frontend
+      context: ../frontend
+      docker:
+        dockerfile: Dockerfile.dev
+      sync:
+        manual:
+          # - src: 'src/**.ts'
+          - src: '../frontend/**'
+            dest: .
     - image: vnavaneeth/cloudbase-main
       context: ./
       docker:
         dockerfile: Dockerfile
       sync:
         manual:
-          # - src: 'src/**.ts'
-          - src: '../frontend/**'
+          - src: './**'
+            # - src: '../frontend/**'
             dest: .
     - image: vnavaneeth/cloudbase-authentication
       context: ../authentication
@@ -86,4 +86,5 @@ deploy:
       - ../Serverless/k8s/*.yml
       - ../static-site-hosting/k8s/*.yml
       - ../image-resize/k8s/*.yml
+      - ../frontend/k8s/*.yml
       # - ./cloubase-main/k8s/ingress-svc.yml
