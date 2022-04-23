@@ -82,16 +82,28 @@ export class userService {
   }
 
   async getProject(projectId: string, userId: string) {
-    const user = await this.userModel.findOne({
-      id: userId,
-      'projects._id': new mongoose.Types.ObjectId(projectId),
-    });
+    const user = await this.userModel
+      .findOne({
+        id: userId,
+        'projects._id': new mongoose.Types.ObjectId(projectId),
+      })
+      .populate({
+        model: this.projectModel,
+        path: 'projects',
+        populate: { model: this.serviceModel, path: 'services' },
+      })
+      .exec();
+
+    const projects = await this.projectModel
+      .findById(projectId)
+      .populate({ model: this.serviceModel, path: 'services' });
+
     if (!user) {
       throw new ApplicationException('No such project exists', 400);
     }
     console.log(user.projects);
 
-    return user;
+    return { user, projects };
   }
 
   async toggleService(
@@ -125,15 +137,15 @@ export class userService {
         );
         // TODO: send internal request to that service
         this.sendRequestToService(serviceName, token, projectId);
-        const resp = await lastValueFrom(
-          this.httpService.post(
-            `${process.env.CLOUDBASE_AUTHENTICATION_URL}/config/${projectId}`,
-            {},
-            { headers: { owner: token } },
-          ),
-        );
+        // const resp = await lastValueFrom(
+        //   this.httpService.post(
+        //     `${process.env.CLOUDBASE_AUTHENTICATION_URL}/config/${projectId}`,
+        //     {},
+        //     { headers: { owner: token } },
+        //   ),
+        // );
 
-        console.log('resp from authentication service : ', resp.data);
+        // console.log('resp from authentication service : ', resp.data);
 
         const p = await this.projectModel.findById(projectId);
         return p;
